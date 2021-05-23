@@ -10,7 +10,7 @@
 
 # Quick Start
 
-```
+```python
 import AssemblyDataReader
 
 # https://open.assembly.go.kr/portal/openapi/main.do에서 key 발급
