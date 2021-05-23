@@ -26,8 +26,9 @@ class AssemblyDataReader:
             params['pIndex'] += 1
         return df.reset_index(drop=True)
     
-    def read(self, deasu, key, bill_id=None, **kargs): 
+    def read(self, daesu, key, bill_id=None, **kargs): 
         '''
+        * daesu (int): 대수
         * key (str): '국회의원 발의법률안', 
                     '본회의 처리안건_법률안', 
                     '본회의 처리안건_예산안', 
@@ -40,34 +41,34 @@ class AssemblyDataReader:
         '''
         if key == '국회의원 발의법률안':
             url = 'https://open.assembly.go.kr/portal/openapi/nzmimeepazxkubdpn'
-            param = {'AGE':deasu, **kargs}
+            param = {'AGE':daesu, **kargs}
         elif key == '본회의 처리안건_법률안':
             url = 'https://open.assembly.go.kr/portal/openapi/nwbpacrgavhjryiph'
-            param = {'AGE':deasu, **kargs}
+            param = {'AGE':daesu, **kargs}
         elif key == '본회의 처리안건_예산안':
             url = 'https://open.assembly.go.kr/portal/openapi/nzgjnvnraowulzqwl'
-            param = {'AGE':deasu, **kargs}
+            param = {'AGE':daesu, **kargs}
         elif key == '본회의 처리안건_결산':
             url = 'https://open.assembly.go.kr/portal/openapi/nkalemivaqmoibxro'
-            param = {'AGE':deasu, **kargs}
+            param = {'AGE':daesu, **kargs}
         elif key == '본회의 처리안건_기타':
             url = 'https://open.assembly.go.kr/portal/openapi/nbslryaradshbpbpm'
-            param = {'AGE':deasu, **kargs} 
+            param = {'AGE':daesu, **kargs} 
         elif key == '역대 국회의원 현황':
             url = 'https://open.assembly.go.kr/portal/openapi/nprlapfmaufmqytet'
-            param = {'DAESU':deasu, **kargs}    
+            param = {'DAESU':daesu, **kargs}    
         elif key == '역대 국회의원 인적사항':
-            UNIT_CD = '1'+str(DAESU).zfill(5)
+            UNIT_CD = '1'+str(daesu).zfill(5)
             url = 'https://open.assembly.go.kr/portal/openapi/npffdutiapkzbfyvr'
             param = {'UNIT_CD':UNIT_CD, **kargs}   
         elif key == '역대 국회의원 위원회 경력':
-            PROFILE_UNIT_CD = '1'+str(DAESU).zfill(5)
+            PROFILE_UNIT_CD = '1'+str(daesu).zfill(5)
             url = 'https://open.assembly.go.kr/portal/openapi/nqbeopthavwwfbekw'
             param = {'PROFILE_UNIT_CD':PROFILE_UNIT_CD, **kargs}   
         elif key == '국회의원 본회의 표결정보':
             assert bill_id is not None, 'bill_id 정보가 필요합니다.'
             url = 'https://open.assembly.go.kr/portal/openapi/nqbeopthavwwfbekw'
-            param = {'DAESU':deasu, 'BILL_ID':bill_id, **kargs} 
+            param = {'DAESU':daesu, 'BILL_ID':bill_id, **kargs} 
         else:
             assert False, 'key가 올바르지 않습니다.'
             
