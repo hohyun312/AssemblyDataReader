@@ -70,7 +70,7 @@ class AssemblyDataReader:
             param = {'PROFILE_UNIT_CD':PROFILE_UNIT_CD, **kargs}   
         elif key == '의안별 표결현황':
             url = 'https://open.assembly.go.kr/portal/openapi/ncocpgfiaoituanbr'
-            param = {'AGE':daesu, 'BILL_ID':bill_id, **kargs} 
+            param = {'AGE':daesu, **kargs} 
         elif key == '국회의원 본회의 표결정보':
             assert bill_id is not None, 'bill_id 정보가 필요합니다.'
             url = 'https://open.assembly.go.kr/portal/openapi/nqbeopthavwwfbekw'
