@@ -29,15 +29,18 @@ class AssemblyDataReader:
     def read(self, daesu, key, bill_id=None, **kargs): 
         '''
         * daesu (int): 대수
-        * key (str): '국회의원 발의법률안', 
-                    '본회의 처리안건_법률안', 
-                    '본회의 처리안건_예산안', 
-                    '본회의 처리안건_결산', 
-                    '본회의 처리안건_기타',
-                    '역대 국회의원 현황',
-                    '역대 국회의원 인적사항',
-                    '역대 국회의원 위원회 경력',
-                    '국회의원 본회의 표결정보'
+        * key (str): 
+            '국회의원 발의법률안'
+            '본회의 처리안건_법률안'
+            '본회의 처리안건_예산안' 
+            '본회의 처리안건_결산'
+            '본회의 처리안건_기타'
+            '역대 국회의원 현황'
+            '역대 국회의원 인적사항'
+            '역대 국회의원 위원회 경력'
+            '의안별 표결현황'
+            '국회의원 본회의 표결정보': bill_id 인자 필요
+                    
         '''
         if key == '국회의원 발의법률안':
             url = 'https://open.assembly.go.kr/portal/openapi/nzmimeepazxkubdpn'
@@ -65,10 +68,13 @@ class AssemblyDataReader:
             PROFILE_UNIT_CD = '1'+str(daesu).zfill(5)
             url = 'https://open.assembly.go.kr/portal/openapi/nqbeopthavwwfbekw'
             param = {'PROFILE_UNIT_CD':PROFILE_UNIT_CD, **kargs}   
+        elif key == '의안별 표결현황':
+            url = 'https://open.assembly.go.kr/portal/openapi/ncocpgfiaoituanbr'
+            param = {'AGE':daesu, 'BILL_ID':bill_id, **kargs} 
         elif key == '국회의원 본회의 표결정보':
             assert bill_id is not None, 'bill_id 정보가 필요합니다.'
             url = 'https://open.assembly.go.kr/portal/openapi/nqbeopthavwwfbekw'
-            param = {'DAESU':daesu, 'BILL_ID':bill_id, **kargs} 
+            param = {'AGE':daesu, 'BILL_ID':bill_id, **kargs} 
         else:
             assert False, 'key가 올바르지 않습니다.'
             
