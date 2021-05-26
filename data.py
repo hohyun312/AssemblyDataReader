@@ -27,7 +27,7 @@ class AssemblyDataReader:
             '본회의 일정':'nekcaiymatialqlxr'
         }
         with open('field.json', 'r') as f:
-            self.field = json.load(f)
+            self.en2kor = json.load(f)
             
     def __read(self, api_id, **kargs):
         url = 'https://open.assembly.go.kr/portal/openapi/' + api_id
@@ -56,7 +56,7 @@ class AssemblyDataReader:
                    '본회의 처리안건_예산안', 
                    '본회의 처리안건_결산', 
                    '본회의 처리안건_기타',
-                   '국회의원 본회의 표결정보'
+                   '국회의원 본회의 표결정보',
                    '의안별 표결현황',
                    '날짜별 의정활동'}:
             assert daesu is not None, 'daesu 인자가 필요합니다.'
@@ -64,7 +64,6 @@ class AssemblyDataReader:
             
         if key in {'날짜별 의정활동'}:
             assert date is not None, 'date 인자가 필요합니다.'
-            assert isinstance(date, str), 'date의 형식을 year-month-day로 해야 합니다.'
             params.update({'DT':date, **kargs})
 
         if key in {'역대 국회의원 현황'}:
@@ -100,10 +99,17 @@ class AssemblyDataReader:
         >>> adr.read('날짜별 의정활동', daesu=21, date='2020-08-18')
 
         # NABO 경제재정수첩 가져오기
-        # 참고: https://open.assembly.go.kr/portal/data/service/selectAPIServicePage.do/OZN379001174FW17905
         >>> adr.read('ncnpwqimabagvdmky')
         
-        * key (str): 다음 중에서 선택. 목록에 없는 API도 요청 주소 뒷자리를 입력하면 가져올 수 있습니다(예시 참조).
+        # 다음 링크에서 전체 예시를 볼 수 있습니다.
+        https://github.com/hohyun321/AssemblyDataReader
+        
+        * key (str): 다음 중에서 선택. 또는 요청 주소 뒷자리 입력.
+            '국회사무처 업무추진비 집행현황'
+            '국회도서관 업무추진비 집행현황'
+            '국회입법조사처 업무추진비 집행현황'
+            '국회예산정책처 업무추진비 집행현황'
+            '국회의원 세미나 일정'
             '국회의원 발의법률안'
             '본회의 처리안건_법률안'
             '본회의 처리안건_예산안'
@@ -113,16 +119,10 @@ class AssemblyDataReader:
             '역대 국회의원 인적사항'
             '역대 국회의원 위원회 경력'
             '의안별 표결현황'
-            '국회의원 본회의 표결정보'
-            '국회사무처 업무추진비 집행현황'
-            '국회도서관 업무추진비 집행현황'
-            '국회입법조사처 업무추진비 집행현황'
-            '국회예산정책처 업무추진비 집행현황'
-            '국회의원 세미나 일정'
             '국회의원 소규모 연구용역 결과보고서'
-            '날짜별 의정활동'
             '본회의 일정'    
-            
+            '국회의원 본회의 표결정보'
+            '날짜별 의정활동'
         * daesu (int): 대수
         * bill_id (str): 의안ID
         * date (str): 날짜. xxxx-xx-xx 형식.
@@ -134,7 +134,6 @@ class AssemblyDataReader:
         else:
             api_id = key
         params = self.__get_params(key, daesu=daesu, bill_id=bill_id, date=date, **kargs)
-            
         return self.__read(api_id, **params)
     
     def listing(self):
