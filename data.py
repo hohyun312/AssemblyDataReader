@@ -49,7 +49,7 @@ class AssemblyDataReader:
             params['pIndex'] += 1
         return df.reset_index(drop=True)
     
-    def __get_params(self, key, daesu=None, bill_id=None, date=None, **kargs):
+    def __get_params(self, key, daesu=None, **kargs):
         params = {}
         if key in {'국회의원 발의법률안', 
                    '본회의 처리안건_법률안', 
@@ -59,49 +59,51 @@ class AssemblyDataReader:
                    '국회의원 본회의 표결정보',
                    '의안별 표결현황',
                    '날짜별 의정활동'}:
-            assert daesu is not None, 'daesu 인자가 필요합니다.'
-            params.update({'AGE':daesu, **kargs})
+            assert not daesu is None, 'daesu 인자가 필요합니다.'
+            params.update({'AGE':daesu})
             
-        if key in {'날짜별 의정활동'}:
-            assert date is not None, 'date 인자가 필요합니다.'
-            params.update({'DT':date, **kargs})
-
-        if key in {'역대 국회의원 현황'}:
-            assert daesu is not None, 'daesu 인자가 필요합니다.'
-            params.update({'DAESU':daesu, **kargs})
+        elif key in {'역대 국회의원 현황'}:
+            assert not daesu is None, 'daesu 인자가 필요합니다.'
+            params.update({'DAESU':daesu})
             
-        if key in {'역대 국회의원 인적사항',
+        elif key in {'역대 국회의원 인적사항',
                    '국회의원 소규모 연구용역 결과보고서',
                    '본회의 일정'}:
-            assert daesu is not None, 'daesu 인자가 필요합니다.'
+            assert not daesu is None, 'daesu 인자가 필요합니다.'
             UNIT_CD = '1'+str(daesu).zfill(5)
-            params.update({'UNIT_CD':UNIT_CD, **kargs})   
+            params.update({'UNIT_CD':UNIT_CD})   
             
-        if key in {'역대 국회의원 위원회 경력'}:
+        elif key in {'역대 국회의원 위원회 경력'}:
             assert daesu is not None, 'daesu 인자가 필요합니다.'
             PROFILE_UNIT_CD = '1'+str(daesu).zfill(5)
-            params.update({'PROFILE_UNIT_CD':PROFILE_UNIT_CD, **kargs})   
+            params.update({'PROFILE_UNIT_CD':PROFILE_UNIT_CD})   
+        
+        args = {k.lower() for k in kargs.keys()}
+        if key in {'날짜별 의정활동'}:
+            assert 'dt' in args, 'DT 인자가 필요합니다.'
 
-        if key in {'국회의원 본회의 표결정보'}:
-            assert bill_id is not None, 'bill_id 인자가 필요합니다.'
-            params.update({'AGE':daesu, 'BILL_ID':bill_id, **kargs}) 
+        elif key in {'국회의원 본회의 표결정보'}:
+            assert 'bill_id' in args, 'BILL_ID 인자가 필요합니다.'
+        
+        params.update(**kargs)    
+            
         return params
     
-    def read(self, key, daesu=None, bill_id=None, date=None, **kargs): 
+    def read(self, key, daesu=None, **kargs): 
         '''
         가져오고 싶은 데이터 이름을 key에 적어주세요. 
         데이터에 따라 추가적인 인자가 필요할 수도 있습니다.
         
-        # 21대 국회의원 발의법률안 가져오기
+        21대 국회의원 발의법률안 가져오기
         >>> adr.read('국회의원 발의법률안', daesu=21)
         
-        # 21대 2020년 8월 18일 의정활동 가져오기
-        >>> adr.read('날짜별 의정활동', daesu=21, date='2020-08-18')
+        21대 2020년 8월 18일 의정활동 가져오기
+        >>> adr.read('날짜별 의정활동', daesu=21, dt='2020-08-18')
 
-        # NABO 경제재정수첩 가져오기
+        NABO 경제재정수첩 가져오기
         >>> adr.read('ncnpwqimabagvdmky')
         
-        # 다음 링크에서 전체 예시를 볼 수 있습니다.
+        다음 링크에서 전체 예시를 볼 수 있습니다.
         https://github.com/hohyun321/AssemblyDataReader
         
         * key (str): 다음 중에서 선택. 또는 요청 주소 뒷자리 입력.
@@ -124,16 +126,15 @@ class AssemblyDataReader:
             '국회의원 본회의 표결정보'
             '날짜별 의정활동'
         * daesu (int): 대수
-        * bill_id (str): 의안ID
-        * date (str): 날짜. xxxx-xx-xx 형식.
-        * 선택적으로 추가 인자를 줄 수 있습니다. API 제공 사이트를 참조하세요.
-            https://open.assembly.go.kr/portal/openapi/openApiNaListPage.do
+        
+        선택적으로 추가 인자를 줄 수 있습니다. API 제공 사이트를 참조하세요.
+        https://open.assembly.go.kr/portal/openapi/openApiNaListPage.do
         '''
         if key in self.__api_ids:
             api_id = self.__api_ids[key]
         else:
             api_id = key
-        params = self.__get_params(key, daesu=daesu, bill_id=bill_id, date=date, **kargs)
+        params = self.__get_params(key, daesu=daesu, **kargs)
         return self.__read(api_id, **params)
     
     def listing(self):

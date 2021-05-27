@@ -47,7 +47,7 @@ adr.read('본회의 일정', daesu=21)
 adr.read('국회의원 본회의 표결정보', daesu=21, bill_id='PRC_A2H1K0K4I1G4X1Z7Q4W4S4N7E1W1F7')
 
 # 날짜 입력 필요
-adr.read('날짜별 의정활동', daesu=21, date='2020-08-18')
+adr.read('날짜별 의정활동', daesu=21, dt='2020-08-18')
 
 # 위 목록에 없는 API도 요청주소 뒷자리를 이용해 데이터를 가져올 수도 있습니다.
 # 참고: https://open.assembly.go.kr/portal/data/service/selectAPIServicePage.do/OZN379001174FW17905
